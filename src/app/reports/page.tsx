@@ -110,9 +110,14 @@ async function SalesSummary({ start, end }: { start?: string; end?: string }) {
   );
 }
 
-export default async function ReportsPage({ searchParams }: { searchParams?: { [key: string]: string } }) {
-  const start = searchParams?.start ?? '';
-  const end = searchParams?.end ?? '';
+export default async function ReportsPage(
+  { searchParams }: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }
+) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const startParam = resolvedSearchParams?.start;
+  const endParam = resolvedSearchParams?.end;
+  const start = Array.isArray(startParam) ? (startParam[0] ?? '') : (startParam ?? '');
+  const end = Array.isArray(endParam) ? (endParam[0] ?? '') : (endParam ?? '');
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">Reports</h1>
